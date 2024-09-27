@@ -25,6 +25,7 @@ export class AppComponent {
   pokemonSprite: any;
   detailsFinal : any[] = [];
   idPokemon : any;
+  speciesVar :any;
 
   constructor(private httpService: ClientHttpService) {}
   
@@ -81,7 +82,6 @@ export class AppComponent {
   }
   getSprite(pokemon: any, index: number, element: any ){
     let image;
-    let idPokemon : any;
     this.httpService.getSprite(pokemon).subscribe(
       async (response) => { 
         this.pokemonSprite =  response;
@@ -107,6 +107,7 @@ export class AppComponent {
             "speciesid": this.pokemonSprite.id
            };
           this.saveSpecie(specieToSave);
+          this.getSpecies(this.pokemonSprite.id);
         }
         
         
@@ -129,6 +130,22 @@ export class AppComponent {
       },
       (error) => { console.log(error); });
   }
+  
+  saveVariety(variety: any){
+    this.httpService.saveSpecie(variety).subscribe(
+      async (response) => { 
+        console.log("Response: "+response);        
+      },
+      (error) => { console.log(error); });
+  }
 
+  getSpecies(id_species: any){
+    this.httpService.getSpeciesById(id_species).subscribe(
+      async (response) => {
+        this.speciesVar = response;
+        console.log("Response species : "+ JSON.stringify(this.speciesVar.varieties));        
+      },
+      (error) => { console.log(error); });
+  }
 }
 

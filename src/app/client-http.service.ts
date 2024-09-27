@@ -10,6 +10,8 @@ export class ClientHttpService {
   private spriteURl = "http://localhost:8080/pokemon/get-sprite?pokemon=";
   private savePokemonUrl = "http://localhost:8080/pokemon/save-pokemon";
   private saveSpecieUrl = "http://localhost:8080/pokemon/save-species";
+  private getSpecieUrl = "http://localhost:8080/pokemon/get-species?id=";
+  private saveVarietyUrl = "http://localhost:8080/pokemon/save-variety";
   constructor(private http: HttpClient) { }
   getAll() {
     return this.http.get(this.allUrl);
@@ -29,5 +31,13 @@ export class ClientHttpService {
 
   saveSpecie(specie : any){
     return this.http.post(this.saveSpecieUrl, specie);
+  }
+
+  getSpeciesById(id : any) {
+    return this.http.get(this.getSpecieUrl+id);
+  }
+
+  saveVariety(variety : any){
+    return this.http.post(this.saveVarietyUrl, variety);
   }
 }
