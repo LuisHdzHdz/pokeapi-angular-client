@@ -24,6 +24,7 @@ export class AppComponent {
   loadChain = false;
   pokemonSprite: any;
   detailsFinal : any[] = [];
+  idPokemon : any;
 
   constructor(private httpService: ClientHttpService) {}
   
@@ -75,33 +76,54 @@ export class AppComponent {
 
   addSprites(evolDetails: any){
     this.detailsFinal.splice(0,this.detailsFinal.length);
-    evolDetails.forEach((element: any, index: number) => this.getSprite(element.species_name, index));
+    evolDetails.forEach((element: any, index: number) => this.getSprite(element.species_name, index, element));
     
   }
-  getSprite(pokemon: any, index: number ){
+  getSprite(pokemon: any, index: number, element: any ){
     let image;
-   
+    let idPokemon : any;
     this.httpService.getSprite(pokemon).subscribe(
       async (response) => { 
         this.pokemonSprite =  response;
         image = this.pokemonSprite.sprites.front_default;
         this.detailsFinal.push({"species_name":pokemon, "sprite":image});
         index+1 === this.evolDetails.length  ? this.loadChain = true : this.loadChain = false;
-        let pokemonToSave = {"idpokemons":this.pokemonSprite.id, 
-                             "name":this.pokemonSprite.name, 
-                             "base_experience":this.pokemonSprite.base_experience,
-                             "hieght":this.pokemonSprite.height,
-                             "is_default":this.pokemonSprite.is_default,
-                             "id_evolution_chain":this.idEvChain,
-                             "weight":this.pokemonSprite.weight
-                            };
-        this.savePokemon(pokemonToSave);
+
+        if (index === 0){
+          this.idPokemon = this.pokemonSprite.id;
+          let pokemonToSave = {"idpokemons":this.idPokemon, 
+            "name":this.pokemonSprite.name, 
+            "base_experience":this.pokemonSprite.base_experience,
+            "hieght":this.pokemonSprite.height,
+            "is_default":this.pokemonSprite.is_default,
+            "id_evolution_chain":this.idEvChain,
+            "weight":this.pokemonSprite.weight
+           };
+          this.savePokemon(pokemonToSave);
+        }else{
+          let specieToSave = {"pokemon_id": this.idPokemon, 
+            "url":this.pokemonSprite.species.url, 
+            "name":this.pokemonSprite.name,
+            "speciesid": this.pokemonSprite.id
+           };
+          this.saveSpecie(specieToSave);
+        }
+        
+        
       },
       (error) => { console.log(error); });
   }
 
   savePokemon(pokemon: any){
     this.httpService.savePokemon(pokemon).subscribe(
+      async (response) => { 
+        console.log("Response: "+response);        
+      },
+      (error) => { console.log(error); });
+  }
+
+  saveSpecie(specie: any){
+    this.httpService.saveSpecie(specie).subscribe(
       async (response) => { 
         console.log("Response: "+response);        
       },
